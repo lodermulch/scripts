@@ -1,0 +1,34 @@
+declare -r lights=/sys/class/leds/input2::
+declare -r keys=(num caps scroll)
+
+for key in ${keys[*]}
+{
+    eval ${key}=${lights}${key}lock/brightness
+}
+
+trap reset int quit term
+reset()
+{
+    local key
+
+    for key in ${keys[*]}
+    {
+        led $key off
+    }
+    exit
+}
+
+led()
+{
+    declare -n key=$1
+    local action=$2 pause=$3
+
+    if [[ $action == on ]]; then
+        echo 1 > $key
+    elif [[ $action == off ]]; then
+        echo 0 > $key
+    else
+        exit 1
+    fi
+    [[ $pause ]] && sleep $pause
+}

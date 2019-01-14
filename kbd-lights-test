@@ -1,0 +1,53 @@
+#!/usr/bin/env bash
+
+if [[ $(id -u) != 0 ]]; then
+    echo 'Must be root.' >&2
+    exit 1
+fi
+
+. kbd-lights
+
+max=4
+
+for ((i = 0; i < $max; i++))
+{
+    led num on
+    led caps on .5
+
+    led num off
+    led scroll on .5
+    led scroll off
+}
+
+for ((i = 0; i < $max; i++))
+{
+    led num on .25
+    led num off
+    led caps on .25
+    led caps off
+    led scroll on .25
+    led scroll off 1
+}
+
+for ((i = 0; i < $max; i++))
+{
+    led num on
+    led scroll on .5
+    led num off
+    led scroll off
+    led caps on .5
+    led caps off
+}
+
+RANDOM=$(date +%s)
+while :; do
+    for key in ${keys[*]}
+    {
+        if (($RANDOM & 1)); then
+            led $key on
+        else
+            led $key off
+        fi
+    }
+    sleep .25
+done
